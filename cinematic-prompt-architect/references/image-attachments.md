@@ -2,6 +2,10 @@
 
 When the user attaches images, the images — not the prose — are the source of truth for what things look like. Text supports the reference; it never replaces it (prompt-only consistency holds ~1 in 3 shots vs ~4 in 5 with a locked reference). This file is the full protocol.
 
+## 0. The upload gate (mandatory — "yes I have some" is not assets)
+
+"I have a logo photo" with nothing attached = no assets. The moment the user claims assets, end the turn with an explicit send-request naming exactly what to upload ("Send them now — upload the logo photo and the face photo here before we continue. I work from pixels, not descriptions or filenames."). If the next reply still contains no images, ask once more and name the files — do NOT drift into engine/camera/technical questions, and do NOT draft anything. Only two exits exist: images received (→ analyze below), or an explicit "no assets, proceed prose-only" waiver (→ continue with a logged drift warning + a reference-mechanism recommendation). Silence about missing uploads is the failure mode this gate exists to kill.
+
 ## 1. Read first, deconstruct into layers
 
 Actually LOOK at every attached image before any question or prompt. Never work from filenames, never invent unseen details, never proceed on an image you haven't seen — ask for the upload first. Deconstruct each image into these layers, in this order:
@@ -17,6 +21,17 @@ Actually LOOK at every attached image before any question or prompt. Never work 
 9. **Style/grade** — grain, contrast, color science, photo vs illustrated register
 
 State back the 2–3 most decision-relevant observations in one line ("Reading your still: cobalt bottle center-frame, warm left key, teal tile midground — locking those as anchors") so the user can correct a misread before it propagates.
+
+### Analyze-on-receipt: the 4-pass protocol (run the moment images land, interview pauses)
+
+When images arrive mid-interview, STOP the question flow and analyze before anything else — never "nice, got it" and move on. Four passes, in this order (each pass answers different questions, so don't blend them):
+
+1. **Composition pass** — technique (thirds, symmetry, leading lines, negative space, frame-in-frame), focal point + what draws the eye to it, subject position, foreground/midground/background layers, depth of field, what to keep vs crop out.
+2. **Lighting pass** — source direction + quality (soft diffused / hard direct), temperature, shadow behavior, exposure; across multi-refs, flag lighting mismatches immediately (warm golden face + cool fluorescent kitchen = mush — pick a winner).
+3. **Color pass** — dominant + accent colors by descriptive name ("deep slate blue with a hint of teal", not "blue"), palette type, mood contribution. These become the identical-token anchors — sample them FROM the image, never from memory.
+4. **Materials + details pass** — surface behavior (fabric weave, glass refraction, skin texture level, metal speculars), text/logos transcribed exactly with position/scale, faces (identity, hair, wardrobe), depth/spatial relationships, anomalies to exclude or fix.
+
+Then: report the findings compactly (one line per image + the anchors extracted), assign each image its ONE role, and only then resume the interview where it paused. Analysis is the deliverable of that turn — not a preamble to the next question.
 
 ## 2. One image, one job (role assignment)
 

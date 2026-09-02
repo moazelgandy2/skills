@@ -63,6 +63,8 @@ If the answer is still vague ("it's for my coffee brand"), ask exactly ONE sharp
 
 If the user attached images, STOP and follow `references/image-attachments.md` first: actually look at each image, deconstruct it into layers (identity, wardrobe, skin, palette, lighting, composition, environment, text/logos, grade), state back the key observations in one line, and assign every image exactly ONE role (first-frame anchor, face ref, wardrobe ref, product ref, style ref, composition ref, environment ref). One photo doing triple duty gets flagged with a split request, not silently accepted.
 
+Upload-gate rule: "I have assets" with nothing attached ends the turn with an explicit send-request — never proceed to technical questions or drafting on claimed-but-unseen images. Only images received (analyze on receipt, interview pauses) or an explicit prose-only waiver (logged drift warning) lets you continue.
+
 Ask each of these as its own separate single-select or short-answer question, one at a time, skipping any that the chosen preset or prior context already answers:
 
 - Do they have reference images for any character, product, or location?
@@ -124,9 +126,15 @@ Synthesize everything into one prompt (see "the final prompt is synthesized, not
 - Keep language concrete and visual, not abstract — describe what's seen/heard, not intent ("she taps her fingers in an irregular rhythm" not "she seems bored").
 - Include the timecoded beat structure if the shot has more than one distinct moment.
 - Close with a short positive-locks list of hard constraints.
-- If the user gave conflicting or missing info anywhere, make a reasonable choice, state the assumption in one line above the prompt, and move on — don't block the deliverable on it.
+- If the user gave conflicting or missing info anywhere, make a reasonable choice, state the assumption in one line above the prompt, and move on — don't block the deliverable on it. Exception: identity- or exact-color-critical work with no attached references ships ONLY with an explicit prose-only waiver line (drift warning + reference-mechanism recommendation) — never silently.
 
 Output the prompt as a markdown artifact (it's a standalone deliverable the user will copy elsewhere) so it's easy to copy/reuse. Offer to produce a second version tuned for a different engine if they mentioned uncertainty about which one to use.
+
+Strict output template — same shape every time so the copy block is unmistakable:
+1. `# Title — Engine | duration | aspect` header, then the 2-line run header (engine/duration/aspect + cheap-test plan), then assumptions (one line each).
+2. Exactly ONE fenced ` ```prompt ` block containing ONLY paste-ready text — no markdown, no headers, no commentary, no meta-notes inside the fence. Label its word count against the density band directly above it ("Copy-ready prompt (127 words — Veo band 100–150)").
+3. Everything else lives OUTSIDE the fence as labeled sections in this order: Beats (timed lines) → Transition (if any) → Spatial/gaze map (if 2+ people) → Audio brief + sound map → Voice specs → Style/color/skin locks → Negative Prompt (Kling only) → Positive locks → Post notes.
+4. Line-craft + body rules from `references/prompt-anatomy.md` category 5 apply inside the fence: speakable rewritten lines (flag rewrites), one action verb per line, and the Three-Keyword body spec per character woven into beats, not dumped in one paragraph.
 
 Add a two-line run header above the prompt: line 1 = engine + duration + aspect ratio (ask aspect if social/vertical is plausible — Veo is strongest at 9:16, most others default 16:9); line 2 = the cost-smart test plan ("test at 480p / 3–5s first, scale up once it lands"). Keep it to two lines, not a lecture.
 
