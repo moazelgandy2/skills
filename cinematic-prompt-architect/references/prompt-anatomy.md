@@ -24,6 +24,7 @@ Ask:
 - Where is the camera relative to the subject (distance, height, angle)?
 - What's the subject doing in the very first frame — already in motion, or held pose?
 - Time of day / season / weather if it affects light and mood.
+- Gaze map (2+ people): frame positions of each person, who looks at whom with screen direction, shared object if any, 180° axis side — full rules in `references/gaze-and-space.md`. No gaze line without a vector.
 
 ## 3. Timing & shot structure
 
