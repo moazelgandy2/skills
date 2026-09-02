@@ -90,6 +90,70 @@ Grounded in official provider docs (OpenAI Cookbook, Google Cloud Blog/DeepMind,
 
 ---
 
+## Seedance 2.0 (ByteDance)
+
+**Quad-modal input is the defining feature** — text, image, video, and audio can feed a single generation simultaneously. Multi-reference composition works via `@` tagging: combine e.g. a character photo + a background plate + an audio clip in one prompt. When the user has 2+ assets that must fuse (product in a specific environment, character played by a specific face), Seedance is the default recommendation — no other model does reference fusion this flexibly.
+
+**Five-slot prompt formula**: Subject (+ `@reference` tags) / Action / Environment / Camera + timestamp beats / Audio + on-screen text. Reference tags go inline where the element appears ("@face as the courier"), not in a separate list the model must cross-reference.
+
+**Timestamp-labeled cuts are first-class syntax** — `[00:00-00:05]` (or `(0-2s)`) headers are read as hard editorial cut instructions, not descriptive labels. This is the highest-leverage Seedance technique for multi-shot output: every beat gets its own timestamp header, and continuity locks (wardrobe, light direction, grade) must be repeated under EACH header, not stated once at the top. Color/style drift typically holds through 2–3 chained extensions; the 4th visibly drifts, so plan storyboards in ≤3 chunks.
+
+**Dialogue in quotes with an emotion/tone label before the line** — `she softly whispers "Just looking at you."` beats a bare quoted line. Keep each line short and phonetically clear. Native lip-sync is supported; treat audio like a sound brief (name each sound in the mix, write "no music" explicitly — open prompts tend to come back scored like a car advert).
+
+**On-screen text is uniquely reliable here** — Seedance is currently the only major model that renders legible timed subtitles/lower-thirds from prompt instructions ("Her line runs as a subtitle along the bottom edge, timed to the voice"). On every other engine, legible text is a known failure mode: never promise it for Sora/Veo/Kling/Runway; plan it as a post overlay instead.
+
+**Six failure modes to pre-empt in the prompt**: (1) camera moves ignored → select "unfixed camera" in settings AND name the move; (2) text/logo distortion → make text big and centered, add "text remains sharp and readable", reduce camera motion near it; (3) color drift across extensions → repeat style/color constraints in every extension prompt; (4) style drift from competing adjectives → one strong anchor keyword ("cinematic realism"), not a pile of mood words; (5) element overload → max ~5 elements per shot, name categories ("modern café interior") not inventories; (6) audio scored over quiet scenes → explicit "no music, only natural room tone".
+
+**Cost/length note (July 2026)**: ~15s clips run roughly ¥1 (~$1.50); via fal.ai ~$0.68/s at 1080p. Test at 3–5s / low-res first, scale up once the prompt lands — same ladder as Sora's 480p-then-1080p workflow.
+
+---
+
+## Reference slots per engine (identity lock lives here, not in prose)
+
+| Engine | Mechanism | Capacity | Notes |
+| --- | --- | --- | --- |
+| Sora 2 | Characters (Cameo) | Character + style + setting images | App-only, no API yet; most consumer-friendly |
+| Veo 3.1 | Ingredients-to-Video + Frames-to-Video | ~2–5 ingredient images; start + end frames | Build ingredients first, then generate; best for outdoor/environment pulls |
+| Kling 3.0 | Elements + start/end frames | 1–4 element images | Strongest close-up face consistency; bind vocal ref for lip-sync |
+| Seedance 2.0 | Multi-reference (`@Image/@Video/@Audio` tags) | Up to 9 images + 3 videos + 3 audios | I2V and multi-ref are mutually exclusive; audio needs an image/video partner |
+| Runway Gen-4.5 | Gen4 Ref + image-to-video + motion brush | Single reference image, no fine-tune | Fastest single-image path; first-frame chaining for series |
+| Pika | First-and-last-frame | Start + end images | Purpose-built for defined-end transitions |
+
+Rules across all of them: one reference per series (never swap mid-project), neutral master before styling, lighting matched across refs, faces kept large. Full protocol in `references/image-attachments.md`.
+
+---
+
+## Prompt density targets (words that actually get followed)
+
+More text is not more control past a density ceiling — and each engine's ceiling differs. Hit the band, not the character limit:
+
+| Engine | Target prompt length | Notes |
+| --- | --- | --- |
+| Sora 2 | Two modes: ultra-detailed production brief OR short open prompt (control-vs-creativity tradeoff — ask the user which) | 7-element formula (Subject, Action, Environment, Camera, Lighting, Style, Technical) when going detailed |
+| Veo 3/3.1 | 100–150 words, 3–6 sentences | 7-part structure; JSON key-value form also works well |
+| Kling 3.0 | T2V tight 60–100 words; **I2V 15–40 words motion-only** (API cap 2,500 chars, but density beats length) | 5-part structure; O1 edit prompts 50–150 words, surgical verbs |
+| Runway Gen-4/4.5 | 40–75 words, structured shot-list | Motion-only for I2V; simplicity beats complexity |
+| Seedance 2.0 | 5 slots + timestamp headers; test at 3–5s first | Repeat locks under every timestamp header |
+
+If a draft exceeds its band, cut adjectives before cutting constraints — one countable physical verb ("takes four steps, pauses, pulls the curtain") is worth a paragraph of mood.
+
+---
+
+## Multi-model toolkit routing
+
+No single engine wins every shot. When the user's project spans needs, route per shot rather than forcing one dialect:
+
+- **Atmospheric establishing / location reveals**: Sora 2 (camera choreography + long ceiling up to ~25s).
+- **Multi-shot narrative with consistent cast**: Kling 3.0 (Elements locking, longer single-prompt narratives ~15s).
+- **Vertical social / cleanest native audio**: Veo 3.1 (9:16 strength, dialogue + ambience).
+- **Specific product/face fused into a specific environment**: Seedance 2.0 (`@` references, on-screen text).
+- **Animating an existing still with precise motion**: Runway Gen-4.5 (image-to-video, Motion Brush thinking).
+- **Restyling existing footage**: Runway Aleph / Kling O1 (surgical edit verbs, not full re-description).
+
+State the routing choice in one line above the prompt(s) so the user knows why each shot lives where it does.
+
+---
+
 ## Cross-model consensus (from official docs plus community convergence)
 
 - **Structured, section-bounded prompts consistently outperform unstructured prose of similar or greater length** — every provider's own docs independently converge on some version of subject, action/motion, camera, lighting, style, audio, even though the exact labels and order differ slightly per platform.
@@ -98,3 +162,6 @@ Grounded in official provider docs (OpenAI Cookbook, Google Cloud Blog/DeepMind,
 - **Concrete, countable, physically specific language beats mood words everywhere.** "Four steps to the window, pauses, pulls the curtain in the final second" (Sora); "slow dolly-in, low angle" versus "cinematic movement" (Kling); precise framing/lens terms versus vague cinematic language (Veo, Runway) — this single principle is the most consistently repeated piece of advice across every provider and every community source found.
 - **Simplicity per single generation is a recurring warning, not just a stylistic preference.** Sora's own guide notes overly detailed prompts can reduce reliability of adherence; Runway explicitly warns against chaining too many large transformations into one shot. The instinct to cram more detail in is not always correct — sometimes the fix for a misfiring generation is to strip complexity back (freeze camera, simplify action, clear background) and re-add it incrementally, which is Sora's own explicitly recommended debugging approach and generalizes well to other platforms.
 - **Prompt-language philosophy differs on the control-versus-creativity axis.** Shorter, more open prompts trade control for creative surprise (most explicit in Sora's docs, but the tension is real everywhere); this is worth surfacing to the user as an explicit choice early in the interview rather than assuming maximal detail is always the goal.
+- **The debugging move is subtraction, not addition.** Sora's own recommended fix for a misfiring generation is to strip complexity back (freeze camera, simplify action, clear background) and re-add incrementally. Generalize this to every engine: change ONE variable per re-roll, diagnose at short length / low resolution first, and only scale up once the prompt lands. This is also the cost-optimal workflow (cheap tests, expensive finish).
+- **On-screen text legibility is engine-specific, not a general capability.** Seedance 2.0 renders timed text reliably; Sora/Veo/Kling/Runway garble it often enough that text must be planned as a post overlay there, never promised in-prompt.
+- **Transitions have a build-side: generate or edit, never both.** Morphs, whip pairs, match cuts, and occlusion hides are prompted as matched PAIRS (Veo morphs, Pika first-last-frame, Kling/Sora whips); dissolves, fades, and hard cuts are post-only. See `references/transitions.md` for the menu and engine fit.

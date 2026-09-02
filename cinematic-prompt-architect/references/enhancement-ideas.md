@@ -39,6 +39,35 @@ Pick only the ones that actually apply to the shot at hand — present as option
 
 - Flag this and suggest storyboarding it as 2+ chained shots with consistent reference assets, rather than one over-length prompt.
 
+**If brand/exact colors must hold:**
+
+- Reduce the palette to 3–5 identically-repeated anchor tokens + one colorist grade anchor + grain; recommend the platform reference lock for exact production colors.
+
+**If faces are prominent:**
+
+- Add tone + undertone + texture per face with a no-averaging lock, tie a directional light to the skin reveal, and (Kling) add the skin negatives — never "flawless" language.
+
+**If native audio matters:**
+
+- Offer the audio-brief + sound-map treatment: signature SFX anchored to visible moments, location bed, explicit music decision, and a post-mix fallback note so a good visual is never discarded over fixable audio.
+
+**If there is more than one beat or shot:**
+
+- Name the transition mechanism + shared anchor for every join (match on action by default, whip pair for energy, occlusion to fake one take, J-cut to glue dialogue); split in-generation halves from post-only blends explicitly.
+
+**If it's a Seedance multi-shot:**
+
+- Put a `[00:00-00:05]`-style timestamp header on every beat and repeat continuity locks under each one — headers read as hard cuts, and locks stated once at the top will drift by beat three.
+- If timed subtitles or lower-thirds are wanted, write them as on-screen-text instructions (Seedance renders them; no other engine reliably does).
+
+**If the project spans shots with different needs:**
+
+- Route per shot across engines (Sora for atmosphere, Kling for narrative consistency, Veo for vertical/social audio, Seedance for reference fusion, Runway for image-to-video motion) and say why in one line — one dialect forced onto every shot is a quality tax.
+
+**If a generation misfires:**
+
+- Offer the strip-back test: freeze the camera, simplify to one action, clear the background, re-add complexity incrementally — plus change only one variable per re-roll, tested cheap (short/low-res) before the expensive finish.
+
 **General polish, offer sparingly:**
 
 - A short negative-prompt list, but only for platforms that actually support it — check `references/model-dialects.md` first. Kling supports and recommends this (common effective terms: warped hands, extra fingers, sliding feet, unnatural morphing, flicker, sudden cut). Runway explicitly does not support negative prompts and warns it can backfire. Sora and Veo don't foreground negative prompts as a lever at all. Never offer this upgrade for a Runway-targeted prompt.

@@ -12,6 +12,7 @@ Ask:
 - Any reference images? If multiple people/products, are refs separate per subject?
 - What must never change about them mid-clip — face, exact wardrobe color, logo, a specific prop?
 - If no image reference exists, get a tight physical description (hair, build, skin tone, distinguishing features) — the more concrete, the less the model improvises.
+- With references: freeze one verbatim identity block reused across every shot (never rephrase); add wardrobe as a separate ref + verbatim line, not prose improvisation (`references/image-attachments.md`).
 
 ## 2. Scene & spatial blocking
 
@@ -34,6 +35,7 @@ Ask:
 - Roughly how long is each (as a fraction of total length, since exact seconds vary by engine)?
 - Any hard transition (whip pan, cut, hard push-in) or is it one continuous move?
 - What's the very last frame/beat — where does it land?
+- For EVERY join between beats: which NAMED mechanism (`references/transitions.md` — match on action, graphic match, whip pair, morph with shared anchor, occlusion hide, sound bridge)? What is shared across it (anchor position/scale, direction, speed, light, grade), and which half is generated vs done in post? Never accept "smooth transition" — always force the mechanism + the shared anchor.
 
 ## 4. Camera behavior
 
@@ -56,6 +58,7 @@ Ask:
 - What's stopping them from getting it directly?
 - Is there one specific turn/beat where something shifts (tone, posture, expression)?
 - Any physical tic or unconscious gesture that should NOT be tied literally to a specific word (avoids over-literal gesture-to-word AI tells)?
+- For spoken lines: breath placement, ONE disfluency max, pitch arc + stressed words, staggered turns with listener backchannels, one emotion per line, voice matching visible effort (`references/sound-design.md` naturalness section) — never overlapping voices in-generation.
 
 ## 6. Physics & materials
 
@@ -66,6 +69,7 @@ Ask:
 - What materials are visibly moving (clothing type, hair, liquid, smoke, hanging objects)?
 - Is there wind/breeze, or still air?
 - Anything that needs to visibly react to contact (fabric creasing under weight, grass bending, liquid rippling)?
+- For smoke/fog/steam (plastic-looking when vague): name source + scale (candle wisp vs bonfire plume) + starting volume + temporal change (thinning direction, reveal target) + wind keyword (drifting, shredding, lingering) + light interaction (backlit edges, volumetric shafts) — cinematic adjectives only, NEVER technical physics terms ("turbulence", "vortices", "fluid dynamics" render as jittery static). Soft low-detail smoke refs for big motion; 3-variation reroll expectation.
 
 ## 7. Lighting
 
@@ -77,6 +81,8 @@ Ask:
 - Direction relative to subject (key from left/right/front/back)?
 - Warm or cool color temperature, and how strong/soft are shadows?
 - Any specific problem to solve (e.g. face partly in shadow but must stay readable)?
+- Exact brand/product color tokens (names, not "brand colors") — these become identical repeated anchors (`references/color-and-skin.md`).
+- For faces: does the light rake across the skin to reveal texture, or flatten it? Tie light to skin explicitly.
 
 ## 8. Audio
 
@@ -88,6 +94,8 @@ Ask (skip entirely if target engine is silent-video-only):
 - Ambient sound / SFX tied to visible actions (footsteps, fabric, wind, objects)?
 - Music or no music?
 
+Then build the full sound design per `references/sound-design.md`: one-line audio brief first, four layers with mix jobs, a sound map against the beats, negative audio. Never "add good sound" — always brief + map it.
+
 ## 9. Style & realism
 
 Why: "photoreal" alone often still produces waxy skin, over-smooth textures, and generic color grading. Naming texture specifics (pore detail, fabric weave, grain) and a concrete grade/look fights this.
@@ -98,6 +106,7 @@ Ask:
 - If photoreal: any texture details worth calling out (skin, fabric)?
 - Color grade — warm/cool/neutral, film grain or clean digital?
 - Aspect ratio / resolution if they care.
+- Grade anchor in colorist terms + unifying grain (`references/color-and-skin.md`); skin spec per face (tone + undertone + texture) when people are visible.
 
 ## 10. Positive locks / non-negotiables
 
@@ -107,3 +116,13 @@ Ask (usually inferable from earlier answers — confirm rather than re-ask from 
 
 - What are the 3-6 things that must be identical from first frame to last (identity, exact colors, a held prop, a lit/unlit state)?
 - Anything that must happen exactly once and not repeat or loop oddly?
+
+---
+
+## Global constraints (apply to every prompt, not a category)
+
+- **Density band**: Veo 100–150 words, Kling 60–100, Runway 40–75, Sora ultra-brief or short-open, Seedance 5 slots + timestamp headers. Cut adjectives before constraints.
+- **Aspect ratio**: ask when social/vertical is plausible. Veo is strongest at 9:16; most others default 16:9. Record the choice in the run header.
+- **On-screen text**: only promise legible text for Seedance; everywhere else it's a post overlay.
+- **Negative prompting**: Kling-only block (3–10 concrete defect terms). Everywhere else, positive phrasing only.
+- **Identity across shots**: prose re-description loses to reference images on every engine — recommend the platform's lock mechanism (Sora Characters, Veo Ingredients, Kling Elements, Seedance `@` refs, Runway Gen4 Ref) whenever consistency matters.

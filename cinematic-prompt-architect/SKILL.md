@@ -1,6 +1,6 @@
 ---
 name: cinematic-prompt-architect
-description: Interviews the user step-by-step to build a production-grade, hyper-detailed AI video generation prompt (for Sora, Veo, Kling, Runway, Seedance, etc.), then writes the final prompt. Use this whenever the user wants to write, plan, or improve a prompt for AI video generation — including phrases like "write me a video prompt," "help me generate a video with AI," "I want to make an AI video of...," "improve my Sora/Veo/Kling prompt," or any request to storyboard/script a short AI-generated clip. Also trigger if the user has reference images/assets for a character or scene and wants to turn them into a coherent AI video. Do NOT just write a prompt directly from a one-line request — always run the interview first unless the user explicitly says to skip it.
+description: Builds production-grade AI video generation prompts (Sora, Veo, Kling, Runway, Seedance, Pika) through a structured step-by-step interview, then writes the engine-ready prompt. Use this whenever anyone wants to write, plan, improve, fix, or debug a video prompt — including vague ideas ("make me a video ad", "I want an AI video of..."), detailed briefs, multi-shot or storyboarded sequences, dialogue and voice performance, sound design, attached reference images, restyle/edit requests, or failed generations (identity drift, morphing hands, robotic dialogue, plastic skin, fake smoke, bad transitions, garbled audio). Do NOT just write a prompt from a one-line request — always run the interview first unless the user explicitly says to skip it.
 ---
 
 # Cinematic Prompt Architect
@@ -43,16 +43,24 @@ Whichever path you're on, wait for the user's actual answer before asking the ne
 
 Before generic questions, offer a set of **preset "director" agents** — each is a _starting bundle of defaults_ for several of the 10 constraint categories, tuned to a common video type, meant to save early questions when nothing yet contradicts them. Picking one lets you skip or fast-answer categories that preset plausibly implies — but as soon as a later answer suggests something the preset didn't anticipate, update silently-assumed defaults and say so (per the core principle above), rather than continuing to apply a default that's stopped fitting. Present this via the question tool (see the hard rule above) as a single-select question, one question, e.g. "What kind of shot is this?" with the preset names as options plus a "None of these / custom" option. Full preset definitions (what each one pre-fills, and which categories it still needs answered) are in `references/agent-presets.md` — read them as reference material, then reason about whether the user's specific case actually matches, rather than applying one verbatim.
 
-Presets to offer: **UGC Ad Director** (hook-driven, handheld, direct-to-camera, product/brand focus), **Narrative Cinematographer** (want/obstacle character work, deliberate camera language, longer beats), **Product Beauty Shot** (locked/smooth camera, macro/texture focus, no dialogue), **Social Hook Creator** (fast, high-energy, short attention-grabbing beat), **Custom/None of these** (build from scratch, no defaults assumed).
+Presets to offer: **UGC Ad Director** (hook-driven, handheld, direct-to-camera, product/brand focus), **Narrative Cinematographer** (want/obstacle character work, deliberate camera language, longer beats), **Product Beauty Shot** (locked/smooth camera, macro/texture focus, no dialogue), **Social Hook Creator** (fast, high-energy, short attention-grabbing beat), **Dialogue Two-Hander** (two speaking characters, distinct voices, lip-sync-safe framing), **Atmospheric Establishing** (no people, environment-as-subject, slow camera, sound-bed driven), **Edit / Restyle** (take existing footage and change X — surgical edit verbs, not a full scene brief), **Custom/None of these** (build from scratch, no defaults assumed).
 
 Tell the user briefly what the chosen preset pre-fills before moving on, so they know what's already decided vs. what you'll still ask about.
 
-### Step 0.5 — Engine and length (still one question at a time)
+### Step 0.5 — The idea: what is this even for
 
-1. Ask which model/engine it's for (Sora, Veo, Kling, Runway, "not sure yet") — one question, single-select. `references/model-dialects.md` has deep, source-grounded detail per provider (official docs plus community consensus): container-vs-prompt parameters, dialogue syntax differences, negative-prompt support (Kling: yes and recommended; Runway: explicitly unsupported; Sora/Veo: not a primary lever), character/identity-lock mechanisms, and known failure modes per platform. Read the relevant section once the engine is picked and let it shape every later category — e.g. never suggest a negative-prompt block for Runway, and for Sora, explicitly ask whether the user wants the "ultra-detailed production brief" mode or a short open prompt, since OpenAI's own guidance frames that as a real control-versus-creativity tradeoff, not a style preference. If unsure which engine, default to the cross-model consensus section at the bottom of that file and note which parts to adapt later.
+A preset is a format, not an idea — "UGC ad" says nothing about what's being sold, said, or felt. Before any technical question, capture the idea in the user's own words with **one open short-answer question**, e.g. "What's the idea — what is this video for?" Listen for four things: (1) the subject/offer (which product, person, announcement — be specific, not "my brand"), (2) the one-line message or hook (what's said or shown), (3) the goal (what the viewer should do or feel — buy, click, laugh, follow, remember), (4) the audience if it changes tone (followers, cold traffic, friends).
+
+If the answer is still vague ("it's for my coffee brand"), ask exactly ONE sharper follow-up targeting the biggest gap (usually: which product/offer, and what's the one thing it says?). Then restate the idea back in one plain line ("So: a 6s UGC hook where you tell cold traffic our new hazelnut latte tastes like dessert, goal = clicks") and confirm with the user before moving on. Everything downstream — dialogue content, hook beat, CTA, even engine choice — hangs off this line, so don't skip it and don't bury it inside a category question later.
+
+### Step 0.6 — Engine and length (still one question at a time)
+
+1. Ask which model/engine it's for (Sora, Veo, Kling, Runway, Seedance, "not sure yet") — one question, single-select. `references/model-dialects.md` has deep, source-grounded detail per provider (official docs plus community consensus): container-vs-prompt parameters, dialogue syntax differences, negative-prompt support (Kling: yes and recommended; Runway: explicitly unsupported; Sora/Veo: not a primary lever), character/identity-lock mechanisms, per-engine prompt-density targets (Veo 100–150 words, Kling 60–100, Runway 40–75, Sora ultra-brief vs open), and known failure modes per platform. Read the relevant section once the engine is picked and let it shape every later category — e.g. never suggest a negative-prompt block for Runway, and for Sora, explicitly ask whether the user wants the "ultra-detailed production brief" mode or a short open prompt, since OpenAI's own guidance frames that as a real control-versus-creativity tradeoff, not a style preference. If the project spans needs (e.g. establishing shot + dialogue scene + product insert), route per shot using the "Multi-model toolkit routing" section and say so in one line. If unsure which engine, default to the cross-model consensus section at the bottom of that file and note which parts to adapt later.
 2. Ask for clip length / constraints if known — separate question. Container limits differ by platform (e.g. Sora supports up to 20s per generation with extensions chaining further; Veo runs shorter, around 4-8s; Runway spans roughly 2-10s) — check the relevant dialect section rather than assuming one number, and flag early if the idea sounds longer than the chosen platform's ceiling, since that becomes a storyboarding/chaining problem, not a single-prompt problem.
 
 ### Step 1 — Assets and references (ask this early, it changes everything downstream)
+
+If the user attached images, STOP and follow `references/image-attachments.md` first: actually look at each image, deconstruct it into layers (identity, wardrobe, skin, palette, lighting, composition, environment, text/logos, grade), state back the key observations in one line, and assign every image exactly ONE role (first-frame anchor, face ref, wardrobe ref, product ref, style ref, composition ref, environment ref). One photo doing triple duty gets flagged with a split request, not silently accepted.
 
 Ask each of these as its own separate single-select or short-answer question, one at a time, skipping any that the chosen preset or prior context already answers:
 
@@ -68,6 +76,8 @@ If they say they have assets but haven't uploaded them, ask them to upload now b
 
 Work through the 10 categories, but not as a fixed sequence of independent blanks to fill. For each one: check first whether earlier answers already imply it (state the inference, don't re-ask); if genuinely open, ask **one single-select or short-answer question at a time**, never batching. After each answer, think through what it changes elsewhere before moving on — this is where most of the actual creative work of the skill happens, not in the asking. Where you can infer plausible options from context, offer them as tappable choices rather than an open freeform question. `references/prompt-anatomy.md` gives the grounding and a starting question bank per category — use it to make sure you don't miss a category, then generate the actual question (or inference) fresh based on everything gathered so far, rather than reading a listed question verbatim.
 
+Four triggers are ALWAYS asked, never inferred, because defaults fail silently on them: exact brand/product colors (names, not "brand colors") — see `references/color-and-skin.md`; skin tone + undertone for every visible face — same file; sound intent (dialogue words? signature SFX? music or no music?) — see `references/sound-design.md`; transition intent whenever there is more than one beat — see `references/transitions.md`.
+
 1. **Subject & identity lock** — who/what, and what about them must never drift (face, wardrobe, exact color, logo, prop)
 2. **Scene & spatial blocking** — foreground/midground/background, camera distance/height, where things start (the "first frame is already alive" principle — avoid a dead static opening pose)
 3. **Timing & shot structure** — how many segments/beats, roughly how long each, what happens optically at each (cut? whip pan? push-in? static?) — build this as a simple timecoded beat list
@@ -80,6 +90,8 @@ Work through the 10 categories, but not as a fixed sequence of independent blank
 10. **Positive locks / non-negotiables** — a final short list of things that must NOT change or drift across the whole clip (identity, wardrobe, lit-vs-unlit props, color continuity across a cut)
 
 As you go, restate back what you've captured so far in one short plain-language line every couple of categories, so the user can correct course early — but keep this to a line, not a recap block, and always follow it immediately with the next single question.
+
+**Interview budget: land the plane in ~9 questions or fewer.** The preset + idea + engine + length + assets questions plus the genuinely-open categories should total around nine exchanges, not fifteen. If more than ~8 questions would be needed, stop asking and make sensible creative choices for the lowest-leverage gaps instead — state each assumption in one line when you deliver the prompt. Never burn three questions on what one inference plus a correction opportunity can cover.
 
 ### Step 3 — "What would make this better" pass
 
@@ -94,6 +106,19 @@ If the request is genuinely complex (multi-character, multi-beat, identity-criti
 Synthesize everything into one prompt (see "the final prompt is synthesized, not assembled" in the core principle above) following the category order from `references/prompt-anatomy.md`, matching the target engine's dialect (see `references/model-dialects.md`):
 
 - Lead with the layer order that engine prefers.
+- Hit the engine's density band (`references/model-dialects.md` table: Veo 100–150 words, Kling 60–100, Runway 40–75, Sora ultra-brief or short-open, Seedance 5 slots + timestamp headers). The band applies to the copy-ready prompt paragraph ONLY — timecoded beats and positive locks live as separate labeled sections outside that count. If the draft runs long, cut adjectives before cutting constraints, and never delete beats, voice specs, or locks to hit the band.
+- Use the engine's dialogue syntax exactly: Veo/Seedance/Kling = quoted lines attributed in prose (`she whispers "…"`) with a tone label; Sora = separate labeled `Dialogue:` block below the prose. Never mix them.
+- Timestamp `[00:00-00:05]`-style headers are Seedance-only syntax. On every other engine write beats as plain timecoded lines (`0.0–3.5s — …`), never bracket headers — dialect syntax must not leak across engines.
+- For Kling image-to-video / Runway image-to-video, go motion-first: describe what moves and how the camera behaves, don't re-describe the static frame. With an attached first frame: 15–40 words of pure movement + a keep-X-unchanged protect clause (`references/image-attachments.md`); the image owns composition, subject, lighting, and style.
+- Multi-reference generations bind each image to its stated role inline (`@Image1` on Seedance, Elements/Ingredients slots elsewhere) and freeze one verbatim identity block across the series — never rephrase it.
+- For Kling O1 / Runway Aleph edits, use surgical verbs ("swap X for Y", "remove", "restyle") aimed at exact elements, ~50–150 words, not a full scene brief.
+- Every transition between beats gets a NAMED mechanism from `references/transitions.md` (match on action, graphic match, whip pair, morph with shared anchor, occlusion hide, sound bridge) — never "smooth transition". State which half lives in-generation vs in-edit: morphs/whips/match-cuts/occlusions are prompted as PAIRS sharing direction, speed, anchor position/scale, light, and grade; dissolves/fades/hard cuts are post-only and never prompted.
+- Color: repeat the EXACT same anchor token strings in prompt, beats, and locks (`references/color-and-skin.md`); one grade anchor in colorist vocabulary plus a unifying grain line.
+- Skin: every face gets tone + undertone + texture (pores, uneven tone, subsurface glow) in identical tokens, directional light tied to the reveal, Kling skin negatives on close-ups, no-averaging lock on multi-face shots.
+- Audio: open with a one-line audio brief, then a sound map (foreground/mid/background, one cue per layer per beat) with SFX anchored to exact visible moments, location-specific bed, music decision stated, negative audio as positive phrasing outside Kling. Dialogue gets the human treatment: breath cue, max one disfluency, pitch arc + stressed words, staggered turns with backchannels, one emotion per line, delivery matching visible effort (`references/sound-design.md`).
+- Smoke/fog/steam: source + scale + volume + temporal change + wind keyword + light interaction, cinematic adjectives only — technical physics terms banned (they render as jittery static).
+- Legible on-screen text / subtitles: promise it ONLY for Seedance. On every other engine, plan text as a post overlay and say so.
+- Add a separate Negative Prompt block ONLY where supported (Kling: yes, short 3–10 concrete defect terms; everywhere else: no — use positive phrasing instead).
 - Keep language concrete and visual, not abstract — describe what's seen/heard, not intent ("she taps her fingers in an irregular rhythm" not "she seems bored").
 - Include the timecoded beat structure if the shot has more than one distinct moment.
 - Close with a short positive-locks list of hard constraints.
@@ -101,9 +126,26 @@ Synthesize everything into one prompt (see "the final prompt is synthesized, not
 
 Output the prompt as a markdown artifact (it's a standalone deliverable the user will copy elsewhere) so it's easy to copy/reuse. Offer to produce a second version tuned for a different engine if they mentioned uncertainty about which one to use.
 
+Add a two-line run header above the prompt: line 1 = engine + duration + aspect ratio (ask aspect if social/vertical is plausible — Veo is strongest at 9:16, most others default 16:9); line 2 = the cost-smart test plan ("test at 480p / 3–5s first, scale up once it lands"). Keep it to two lines, not a lecture.
+
 ### Step 5 — Iterate
 
 After delivering, ask if anything should change before they run it, and be ready to adjust specific categories (e.g., "make the lighting moodier," "add a second beat") without re-running the whole interview — just touch the relevant section and re-output the full prompt.
+
+### Step 6 — Debug a misfiring generation (subtract, don't add)
+
+When the user comes back with a bad output, resist rewriting the whole prompt. Diagnose first, change ONE variable per re-roll:
+
+1. Ask what specifically looks wrong (one question), or read the artifact they describe.
+2. Map it to the failure mode: anatomy/morphing → move it to (or fix) the negative block on Kling, simplify the action everywhere else; motion ignored → name the camera move explicitly and check image-to-video settings ("unfixed camera"); drift across a cut/extension → repeat locks under every beat header; garbled text → move text to post (unless Seedance); mushy look → cut adjectives to get back inside the density band.
+3. The strip-back test: if nothing obvious fits, freeze the camera, simplify to one action, clear the background — re-add complexity incrementally once the simple version lands.
+4. Always re-test cheap (short length / low res / one variable) before the expensive finish.
+
+### Safety and honesty rails
+
+- Real likenesses (celebrities, the user's own face, brand mascots played by real people): use the platform's consented reference mechanism (Sora Characters/Cameo, Veo Ingredients, Kling Elements, Seedance `@` refs) and note that consent/opt-in applies — never promise an unconsented real person.
+- Filter trips: if a prompt keeps getting refused, rephrase toward formal technical language (describe clothing, not lack of it; action verbs, not suggestive context) rather than trying to sneak past the filter.
+- Never promise what the engine can't do: exact durations beyond the ceiling (storyboard/Extend instead), legible text outside Seedance, negative prompts on Runway, multi-character consistency from prose alone (needs reference images).
 
 ## Reference files
 
@@ -113,3 +155,7 @@ These are grounding material and starting points for reasoning — not templates
 - `references/prompt-anatomy.md` — the 10 constraint categories in full detail, with a starting question bank for each and the reasoning behind why each matters
 - `references/model-dialects.md` — per-engine notes (Sora/Veo/Kling/Runway/Seedance) on preferred layer order, length, native audio support, negative-prompt support, and known strengths
 - `references/enhancement-ideas.md` — a seed pool of "make it better" ideas to reason from in Step 3, not an exhaustive list to pick from
+- `references/color-and-skin.md` — color-lock mechanics (identical anchor tokens, one grade anchor, grain) and skin spec (tone + undertone + texture, directional reveal, Kling skin negatives); read whenever colors must hold or faces are visible
+- `references/sound-design.md` — audio brief, four layers + mix jobs, sound map, negative audio, post line, review checklist; read whenever the engine does native audio or the user cares about sound
+- `references/transitions.md` — in-generation vs in-edit line, transition menu with job each fits, pair-writing rules, engine fit, failure fixes; read whenever there is more than one beat or shot
+- `references/image-attachments.md` — read-first deconstruction, one-image-one-role assignment, triple-duty flag, first-frame discipline (I2V 15–40 words motion-only), fusion rules, identity block, chain discipline; read whenever ANY image is attached or referenced

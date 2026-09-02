@@ -62,6 +62,48 @@ Still open: subject/identity, scene/blocking, lighting, audio, physics/materials
 
 ---
 
+## Dialogue Two-Hander
+
+Two speaking characters, one continuous take. Built for Veo/Seedance native audio and Kling lip-sync.
+
+Pre-fills:
+
+- **Performance & subtext**: always asks for each character's want, staggers them for contrast, expects the beat change where the dynamic flips
+- **Audio**: dialogue-first — exact lines + per-speaker voice spec (register, pacing, accent, emotional coloring) + lip-sync-safe framing (mouths visible, stable medium or closer)
+- **Timing**: short enough that every line fits in one breath at the clip length (8s ≈ two short lines max)
+
+Still open: subject/identity (reference stills strongly recommended — prose alone won't hold two faces), scene/blocking, camera, lighting, positive locks.
+
+---
+
+## Atmospheric Establishing
+
+No people, environment-as-subject. Establishing shots, location reveals, mood plates.
+
+Pre-fills:
+
+- **Performance & subtext**: not applicable, skip
+- **Camera behavior**: slow, single move (drift, rise, arc) — one move, not three
+- **Audio**: sound-bed driven — ambience + 1 signature SFX, explicit "no music" unless scored in post
+- **Timing**: front-load the reveal or the grade shift; longer ceilings welcome (Sora up to ~25s)
+
+Still open: subject/environment, scene/blocking, lighting/palette anchors (name 3–5 specific colors), style/realism, positive locks.
+
+---
+
+## Edit / Restyle (Kling O1 · Runway Aleph)
+
+The user has existing footage and wants to change X — not a fresh generation.
+
+Pre-fills:
+
+- **Workflow**: surgical edit verbs ("swap X for Y", "remove", "add", "restyle") aimed at exact elements, ~50–150 words, subject-first then motion/camera then style anchors
+- **Everything else**: inherits the source clip — don't re-brief the scene, describe only the delta
+
+Still open: the exact element(s) targeted, the replacement spec, which edit mode (swap / remove / add / restyle), positive locks on everything that must NOT change.
+
+---
+
 ## Custom / None of these
 
 No defaults assumed — ask through all 10 categories from scratch, one question at a time, using context clues from whatever the user has already described to skip only what they've explicitly already told you.
