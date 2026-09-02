@@ -36,6 +36,7 @@ Ask:
 - Roughly how long is each (as a fraction of total length, since exact seconds vary by engine)?
 - Any hard transition (whip pan, cut, hard push-in) or is it one continuous move?
 - What's the very last frame/beat — where does it land?
+- TOTAL finished length vs native ceiling: if over, split into a chain FIRST (Extend for one continuous take, Assembly of N shots otherwise — see `references/long-form.md`), size each beat to its clip, and plan seams on neutral motion with handoff specs.
 - For EVERY join between beats: which NAMED mechanism (`references/transitions.md` — match on action, graphic match, whip pair, morph with shared anchor, occlusion hide, sound bridge)? What is shared across it (anchor position/scale, direction, speed, light, grade), and which half is generated vs done in post? Never accept "smooth transition" — always force the mechanism + the shared anchor.
 
 ## 4. Camera behavior
