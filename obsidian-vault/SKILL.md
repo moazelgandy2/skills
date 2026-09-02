@@ -144,6 +144,53 @@ Bulk operations (e.g. "add a field to every note tagged X") are `search_query` t
 - **`command_list` / `command_execute`**: for actions outside the file-editing model — e.g. triggering a plugin command, opening a specific view, running a template insertion the user has bound to an Obsidian command. List first if you're not sure of the exact command id; ids look like `"global-search:open"`.
 - **`open_file`**: opens a note in the Obsidian UI itself (not just returning its content) — use when the user wants to *see* the result in the app, e.g. after creating a new note.
 
+## File naming, organization, and tagging conventions
+
+These are this vault's conventions — apply them by default whenever creating, renaming, moving, or tagging a note, without asking each time. (If the user asks for something that conflicts with a rule here, follow their explicit instruction for that note — these are defaults, not hard constraints.)
+
+### Naming files
+
+- **Plain, descriptive titles.** `Project Kickoff Notes.md`, not `2026-09-02-project-kickoff-notes.md` or `project_kickoff_notes.md`. Title Case, spaces, no dates or IDs baked into the filename — the one exception is daily/journal notes, where the date *is* the identity of the note (e.g. `2026-09-02.md` inside a dated journal folder).
+- **No characters that need escaping.** Avoid `/`, `:`, `#`, `^`, `[[`, `]]`, and other markdown/link syntax in filenames — they either don't resolve as vault paths or need percent-encoding to address later, which is friction for no benefit. A colon in a title ("Meeting: Q3 Planning") should become a dash or just be dropped ("Meeting - Q3 Planning").
+- **Check before creating.** Before creating a new note, `vault_list` the target folder (or `search_simple` the working title) to catch near-duplicates — "Project Kickoff Notes" vs. "Project Kickoff" vs. "Kickoff Meeting Notes" all fragment the same topic across three files if nobody checks first.
+- **The title is the H1, generally.** For non-journal notes, the filename and the note's first heading should usually match (or the heading can be omitted and the filename stands alone as the title, per the user's existing style — check a couple of existing notes in the target folder to see which pattern is already in use before picking one).
+
+### Folder organization: PARA
+
+This vault uses PARA (Projects / Areas / Resources / Archive). Route new notes by asking what the note *is*, not just what it's about:
+
+| Folder | What goes here | Signal |
+|---|---|---|
+| **Projects/** | Notes tied to a specific outcome with an end date | "This is done when X happens" |
+| **Areas/** | Ongoing responsibilities with no end date | "This needs to stay maintained indefinitely" |
+| **Resources/** | Reference material, topics of interest, not tied to a project or responsibility | "I might want to look this up later" |
+| **Archive/** | Anything from Projects or Areas that's no longer active | "This is done or dormant" |
+
+When a project finishes or a note goes stale, move it into `Archive/` (`vault_move`) rather than leaving it live in `Projects/`/`Areas/` — that's what keeps PARA useful instead of just another set of folders that accumulates cruft. If it's genuinely unclear which bucket a new note belongs in, ask rather than guessing — miscategorized notes are exactly the kind of thing that's annoying to notice and fix later.
+
+### Metadata: frontmatter for facts, tags for themes
+
+To keep this clean, split structured and flexible metadata rather than cramming everything into tags:
+
+- **Frontmatter properties** carry structured, queryable facts about the note — the things you'd want to filter or sort on with `search_query`. A consistent minimal schema per note type, e.g.:
+  ```yaml
+  ---
+  type: project        # project | area | resource | daily
+  status: active        # active | on-hold | done | archived
+  area: Health          # which Area this relates to, if any
+  ---
+  ```
+  Keep the field set small and consistent across similar notes — check an existing note of the same type before inventing a new field name for something a field probably already covers.
+- **Tags** are for cross-cutting themes that don't map to a folder or a frontmatter value — the kind of thing a note might share with otherwise-unrelated notes across every PARA bucket (e.g. `#waiting-on`, `#needs-review`). Keep nesting shallow (one level is usually enough, e.g. `#waiting-on/alex` rather than three or four levels deep) and keep the tag vocabulary small — before adding a new tag, `tag_list` to check whether an existing one already covers it. If you find yourself wanting a tag that's really just "what kind of note is this" (project/area/resource), that's a `type` frontmatter field instead, not a tag — that distinction is what keeps tags from turning into a second, messier folder system.
+
+### Quick pre-flight checklist
+
+Before creating or restructuring anything, worth a fast pass through:
+- Does a note like this already exist? (`vault_list` the folder / `search_simple` the title)
+- Which PARA bucket does it actually belong in?
+- Does the filename need any characters cleaned up?
+- Does an existing frontmatter field or tag already cover what I'm about to add, per `tag_list` / a sibling note's frontmatter?
+
 ## General judgment
 
 - Prefer `vault_patch` over `vault_write` whenever the user's request targets part of a note — it's structured, so it can't accidentally mangle the rest of the file the way a full-content rewrite might if your read-modify-write logic slips.
