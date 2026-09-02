@@ -191,6 +191,124 @@ Before creating or restructuring anything, worth a fast pass through:
 - Does the filename need any characters cleaned up?
 - Does an existing frontmatter field or tag already cover what I'm about to add, per `tag_list` / a sibling note's frontmatter?
 
+## Writing documentation, overviews, and architecture notes
+
+Applies whenever creating or substantially editing a note whose job is to explain something — an architecture overview, a system doc, a decision record, a how-to/runbook. The goal is documentation that's easy to scan, stays accurate as it's edited piecemeal over time, and takes advantage of the fact that everything here is plain text a tool (or a person) can patch into precisely.
+
+### Diagrams: Mermaid, not images
+
+Obsidian renders Mermaid code blocks natively in preview — use them instead of pasting screenshots or ASCII art. Being plain text means a diagram can be created and *edited* the same way as any other section (`vault_patch` a code block like any other block), rather than requiring an external tool and a re-upload every time something changes. Pick the diagram type to match what's actually being shown, rather than defaulting to a flowchart for everything:
+
+| Need | Diagram | Mermaid type |
+|---|---|---|
+| Steps in a process, decision branching | Flowchart | `flowchart TD` / `flowchart LR` |
+| Requests/calls between components over time | Sequence diagram | `sequenceDiagram` |
+| Data model, entities and their relationships | ER diagram | `erDiagram` |
+| Lifecycle or status transitions | State diagram | `stateDiagram-v2` |
+| Component structure, classes, interfaces | Class diagram | `classDiagram` |
+| Timeline, project phases | Gantt | `gantt` |
+
+Example — a component architecture as a flowchart:
+````markdown
+```mermaid
+flowchart TD
+    Client[Web Client] --> API[API Gateway]
+    API --> Auth[Auth Service]
+    API --> Orders[Orders Service]
+    Orders --> DB[(Orders DB)]
+    Auth --> UsersDB[(Users DB)]
+```
+````
+Keep diagrams small and focused — one diagram per concern (e.g. a request-flow sequence diagram *and* a separate data-model ER diagram) reads far better than one diagram trying to show everything at once.
+
+### Callouts for anything that isn't plain narrative
+
+Obsidian's callout syntax makes warnings, decisions, and open questions visually distinct instead of getting lost in a paragraph:
+```markdown
+> [!important] Decision
+> We chose Postgres over Mongo for the orders table because of transactional guarantees across order + payment writes.
+
+> [!warning]
+> This service still reads from the legacy cache — do not remove it until MIGRATE-142 lands.
+
+> [!question] Open question
+> Should retries be idempotent at the API layer or the queue consumer?
+```
+Common types: `note`, `tip`, `important`, `warning`, `question`, `example`, `quote`. Use them sparingly enough that they stay meaningful — a doc that's all callouts is as hard to scan as one with none.
+
+### Structural templates
+
+Fixed skeletons make a doc both easier to read (readers know where to look) and easier to maintain (headings are stable targets for future `vault_patch` calls). Default to these unless the user has an existing pattern in the vault worth matching instead — check a sibling doc first.
+
+**Architecture / system overview:**
+```markdown
+# [System Name]
+
+## Overview
+One paragraph: what this is and why it exists.
+
+## Architecture
+[diagram + component descriptions]
+
+## Key decisions
+[notable decisions and their rationale — or link to ADRs]
+
+## Dependencies
+[what this relies on, what relies on it]
+
+## Open questions
+[unresolved things, explicitly flagged rather than silently omitted]
+```
+
+**Architecture Decision Record (ADR)**, one per significant decision, useful once a project has more than a couple of them:
+```markdown
+# [Short decision title]
+
+## Status
+Proposed | Accepted | Superseded by [[...]]
+
+## Context
+What's the situation forcing this decision?
+
+## Decision
+What was decided.
+
+## Consequences
+What this makes easier, what it makes harder.
+```
+
+**Runbook / how-to:** a numbered `## Steps` section with one action per heading or list item, plus a `## Troubleshooting` section for known failure modes — written for someone under time pressure, so lead with the action, not the background.
+
+### Linking instead of duplicating
+
+- **Wikilinks** (`[[Note Name]]`) between related docs — link to the auth service doc from the orders service doc instead of re-explaining auth inline.
+- **Embeds** (`![[Note Name#Heading]]`) to pull a section from one note into another so it's written once and stays current everywhere it's referenced, instead of copy-pasted and silently drifting out of sync.
+- **MOCs (Maps of Content)** — for a documentation set with more than a handful of notes, keep one index note per area that links out to everything in it, organized by theme rather than alphabetically. This is usually worth creating proactively once a `Resources/` or `Areas/` folder starts accumulating related docs — check with `vault_list` and suggest one if it's missing.
+
+### Heading hygiene (this one has a practical payoff, not just looks)
+
+Keep headings unique within a document and reasonably shallow (rarely deeper than H3-H4) — beyond being easier to scan, this is exactly what keeps `vault_patch` heading-targeting reliable: duplicate sibling headings force addressing by non-printable marker suffix instead of plain text, and deep nesting makes `target` arrays longer and more brittle to keep in sync as the doc evolves. If a section is getting deep enough to need H5/H6, it's usually a sign the doc wants to be split into linked sub-notes instead.
+
+### Tables and code blocks over prose, where structure is the point
+
+- A table beats a paragraph for anything that's really rows and columns in disguise — config options, API parameters, comparison of approaches. Three or more parallel items with the same 2-3 attributes each is a table, not a bulleted list.
+- Fenced code blocks with a language tag (` ```yaml `, ` ```python `, ` ```bash `) for anything that is code, config, or a command — never inline or unlabeled, since syntax highlighting and copy-ability both depend on it.
+
+### Extra frontmatter fields for documentation notes
+
+On top of the `type`/`status`/`area` schema from the section above, docs benefit from a couple more fields worth setting consistently:
+```yaml
+---
+type: architecture
+status: current        # current | draft | outdated
+related:
+  - "[[Orders Service]]"
+  - "[[Auth Service]]"
+last-reviewed: 2026-09-02
+---
+```
+`related` gives `search_query` something structured to traverse for "what else touches this" queries beyond just backlinks; `last-reviewed` makes stale docs easy to find later (`search_query` for anything older than N months) rather than silently rotting.
+
 ## General judgment
 
 - Prefer `vault_patch` over `vault_write` whenever the user's request targets part of a note — it's structured, so it can't accidentally mangle the rest of the file the way a full-content rewrite might if your read-modify-write logic slips.
