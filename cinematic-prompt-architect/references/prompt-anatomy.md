@@ -21,8 +21,9 @@ Why: models default to a flat, undirected space unless depth and distance are sp
 Ask:
 
 - What's in foreground / midground / background?
-- Where is the camera relative to the subject (distance, height, angle)?
-- What's the subject doing in the very first frame — already in motion, or held pose?
+- Geometric Grid Telemetry (`references/frame-matching.md`): exact Cartesian coordinates (subject horizontal X 0%–100%, vertical Y 0%–100%), eyeline anchor (e.g. 33% Y), horizon bisect line (e.g. 40% Y), and subject vertical frame occupancy percentage (e.g. 50% for medium close-up, 25% for wide) to lock 95–100% exact framing across shots.
+- Where is the camera relative to the subject (exact elevation in meters, tilt angle in degrees, optical focal length in mm)?
+- What's the subject doing in the very first frame — already in motion, or held pose? (If chained shot, enforce the Shared Frame Rule where frame 0.0s matches previous exit frame).
 - Time of day / season / weather if it affects light and mood.
 - Gaze map (2+ people): frame positions of each person, who looks at whom with screen direction, shared object if any, 180° axis side — full rules in `references/gaze-and-space.md`. No gaze line without a vector.
 

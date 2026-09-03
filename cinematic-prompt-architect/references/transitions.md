@@ -1,32 +1,82 @@
-# Transitions — Which, When, and Where They Get Built
+# Transitions Encyclopedia — Mechanics, When to Use & Technical Execution
 
-Fake-feeling AI transitions come from three errors: a vague "smooth transition" with no named mechanism, a transformation with no shared anchor, and prompting in the editor what belongs in post (or vice versa). This file draws the lines.
+Transitions determine temporal rhythm, narrative cohesion, and spatial continuity. In AI video generation, transitions must be explicitly assigned to either **In-Generation Mechanics** (which require physics and optical rendering) or **In-Edit Decisions** (which belong in post-production).
 
-## The golden rule: in-generation vs in-edit
+---
 
-**Build in the generation** (needs frame-by-frame motion only the model can render): morphs, whip pans carried across a cut, match cuts (graphic / action / sound), first-to-last-frame interpolation, occlusion hides (foreground wipe, silhouette pass, lens-cover, shadow pass, dark-frame pass).
+## 1. The Core Law: In-Generation vs In-Edit
 
-**Build in the edit, never prompt** (instant and perfect in any NLE): hard cuts, cross-dissolves, fades to/from black, washes. Prompting "then dissolves into…" buys a muddy AI dissolve and a wasted generation — write the two clean clips and dissolve in post.
+| Transition Mechanism | Execution Domain | Why | Prompt Handling |
+| :--- | :--- | :--- | :--- |
+| **Match on Action** | **In-Generation + Edit** | Motion starts in Shot A, finishes in Shot B | Prompt identical vector and speed across both shots |
+| **Graphic Match Cut** | **In-Generation + Edit** | Compositional geometry matches across space/time | Prompt identical Cartesian coordinates and scale on both shots |
+| **Whip Pan (Swish Pan)** | **In-Generation + Edit** | Rapid directional motion blur bridges the cut | Prompt paired OUT-blur and IN-blur with matched speed/direction |
+| **Morph / Transformation** | **In-Generation ONLY** | Continuous physical interpolation of subject matter | Single unbroken take prompt with explicit anchor metamorphosis |
+| **Occlusion Hide / Wipe** | **In-Generation + Edit** | Frame blocked by passing foreground object | Prompt full black-out occlusion at tail of A and head of B |
+| **Light Leak / Lens Flash** | **In-Generation OR Post** | Solar flare wipes frame into new scene | Prompt high-intensity directional flare blowout |
+| **Crash Zoom Transition** | **In-Generation + Edit** | Violent focal burst into subject details | Prompt 0.3s zoom burst with matched entry trajectory |
+| **J-Cut / L-Cut** | **Post-Production ONLY** | Audio bridge preceding or trailing video cut | Specify in Audio Brief and Post Notes; never prompt visual fade |
+| **Hard Cut / Smash Cut** | **Post-Production ONLY** | Instantaneous frame swap on timeline | Generate two pristine clips; assemble with razor cut in NLE |
+| **Cross-Dissolve / Fade** | **Post-Production ONLY** | Opacity blend across timeline | **NEVER prompt "dissolves into"** (causes muddy AI artifacts) |
 
-## The transition menu — which for which job
+---
 
-- **Match on action** (default, most invisible): cut DURING a movement that continues across the cut — door opening, head turn, hand lift. Use whenever staying in one scene; choreograph the action so both halves share it.
-- **Graphic match**: same shape/composition across time or place (circle → circle, skyline → skyline). Use for thematic links and time jumps; lock position + scale + framing on both halves or the cut breaks.
-- **Sound bridge / J-cut / L-cut**: cheapest invisible glue — next scene's audio starts early (J) or current audio lingers (L). Use on dialogue and documentary flow; plan in the sound map, execute in post.
-- **Whip pan**: energy, comedy, frantic travel, big time/space jumps. Must be motivated or it reads as a YouTube preset. Rules: SAME direction + SAME speed both halves, heavy motion blur at peak, cut at the blurriest frame, add a whoosh SFX. Models default to slow pans — override explicitly ("fast whip pan, heavy motion blur at peak").
-- **Morph**: one thing becomes another (product transform, pupil → galaxy). Needs a SHARED shape or motion carried through, named explicitly — without it the morph collapses into blur. Veo handles morphs cleanly; keep it a single continuous take, no cut.
-- **Occlusion / invisible cut** (1917-style): hide the cut behind a passing foreground object, a whip-blur, or a near-black frame. Use to fake one continuous take across separately generated clips; design the occluder (pillar, passerby, dark doorway) into BOTH halves.
-- **Smash cut**: hard contrast for comedy/shock — pure edit, no blend, no prompt needed beyond two strong endpoints.
-- **Dissolve / fade**: time passage, memory, contemplation — pure edit, never prompted.
+## 2. Complete Transitions Menu & When to Use
 
-## Pair-writing: transitions come in halves
+### 1. Match on Action (The Invisible Narrative Cut)
+- **Concept**: Cutting from one shot to another while the subject is in the middle of a continuous physical motion.
+- **When to Use**: Intra-scene continuity, changing angles during combat, entering doorways, sitting down, opening letters.
+- **Rules**: The motion in Shot 1 must match the direction, velocity, and limb state in frame 0.0s of Shot 2.
+- **Prompt Example**:
+  - *Shot 1*: `"At 9.4s, subject initiates forward right-leg kick, foot elevating to 45 degrees as frame terminates."`
+  - *Shot 2*: `"First frame at 0.0s catches right foot mid-kick at 45 degrees, continuing full kinetic arc into heavy bag impact."`
 
-Whips, match cuts, and occlusions are always written as PAIRS: an OUT half and an IN half sharing direction, speed, anchor position/scale, light, and grade. Generate both, cut on the matched frame (blur peak / action peak / anchor alignment). One half without the other is just a pan.
+### 2. Graphic Match Cut (Thematic & Temporal Link)
+- **Concept**: Transitioning between two visually disparate scenes by matching the exact shape, color, or composition of an object.
+- **When to Use**: Time skips, memory triggers, thematic metaphors (e.g. spinning roulette wheel cutting into spinning jet turbine; circular eye pupil cutting into lunar eclipse).
+- **Rules**: Lock the Cartesian coordinates (X/Y screen percentages) and scale of the matching shape verbatim in both prompts.
+- **Prompt Example**:
+  - *Shot 1*: `"Subject's round brass pocket watch fills exactly 40% of screen center (X: 50%, Y: 50%), ticking rhythmically."`
+  - *Shot 2*: `"Full moon in night sky fills exactly 40% of screen center (X: 50%, Y: 50%), bathed in identical circular luminescence."`
 
-## Engine fit (2026)
+### 3. Whip Pan (Swish / Speed Pan)
+- **Concept**: The camera pans with violent angular velocity (180°–360°/sec), dissolving the image into high-speed directional motion blur streaks.
+- **When to Use**: High-energy transitions, time jumps, comedic beats, rapid shifts in geographical location, frenetic montage.
+- **Rules**: Must be written as a **Coordinated Pair**:
+  - *OUT-half (Shot 1)*: Camera accelerates horizontally screen-right, hitting peak motion blur at the final frame.
+  - *IN-half (Shot 2)*: Camera starts at peak motion blur panning screen-right, decelerating into settled focus on the new subject within 0.4s.
+  - Direction and angular speed must be 100% identical.
 
-Veo: morphs land cleanly. Pika: first-to-last-frame is purpose-built for defined-end transitions. Kling/Sora: camera-driven whips and match cuts (override slow defaults). Seedance: timestamp headers ARE hard cuts — use them as the edit plan. Runway: reference/first-frame stills keep both halves consistent. Luma: smooth dreamlike interpolation for dissolves you do want generated.
+### 4. Occlusion Hide (1917 / Hitchcock Rope Invisible Cut)
+- **Concept**: The camera passes behind a massive foreground object (a dark tree trunk, concrete pillar, actor's back, or closing door) that momentarily fills 100% of the frame in darkness, masking the edit seam.
+- **When to Use**: Faking an unbroken 60-second or multi-minute continuous take across separately generated 10s AI clips.
+- **Rules**:
+  - *Shot 1 Exit*: Camera pushes close until the dark pillar or actor's trench coat completely eclipses the entire lens (100% frame occlusion).
+  - *Shot 2 Entrance*: Camera emerges from behind the same dark surface in the new environment with matching forward velocity.
 
-## Failure fixes
+### 5. Metamorphic Morph (Continuous Take)
+- **Concept**: A single unbroken take where an element physically liquefies, re-organizes, or grows into another without an editorial cut.
+- **When to Use**: Surreal dream sequences, sci-fi nano-technology, high-end commercial product reveals (perfume bottle transforming into blooming rose).
+- **Rules**: Execute as a single prompt pass (Veo or Kling preferred). State the static anchor points that remain unchanged while the target surface morphs.
 
-Muddy dissolve → you prompted an edit-side transition; re-plan as two clean clips + post blend. Morph collapsed to blur → name the shared anchor. Whip came out slow → say "fast" + "heavy blur at peak" explicitly. Halves don't match → lock position/scale/direction/light across both. Grade jump across the cut → shared palette anchors + reference stills + grade match in post. Cut still visible → switch mechanism to occlusion (pass something dark/close past the lens in both halves) or bridge it with a J-cut.
+### 6. Smash Cut
+- **Concept**: A sudden, violent, jarring cut between two scenes of extreme tonal, kinetic, or acoustic contrast (e.g. screaming battlefield cutting to a tranquil silent breakfast table).
+- **When to Use**: Shock, waking from nightmares, comedic absurdity, sudden interruptions.
+- **Rules**: Maximum acoustic and visual contrast. Zero pre-roll motion blur; instant hard cut on timeline.
+
+### 7. Sound Bridges (J-Cuts & L-Cuts)
+- **Concept**:
+  - **J-Cut**: The audio of the upcoming scene (a car horn, dialogue line, or music intro) arrives 1.0–2.0s before the picture cuts.
+  - **L-Cut**: The dialogue or room tone of the previous scene continues playing under the opening frames of the new scene.
+- **When to Use**: Dialogue flow, conversational rhythm, smoothing hard cuts, documentary narrative momentum.
+- **Rules**: Stated in the prompt's `AUDIO` specification and detailed in Post-Production Engineering Notes.
+
+---
+
+## 3. Pairing Protocol Checklist
+
+When writing multi-shot sequences featuring transitions, verify:
+- [ ] **Directional Symmetry**: Whip pan directions match (Right-to-Right, Left-to-Left).
+- [ ] **Velocity Match**: The exit speed of Shot 1 matches the entry speed of Shot 2.
+- [ ] **Scale & Coordinate Alignment**: Graphic matches share identical Cartesian X/Y percentages and subject occupancy.
+- [ ] **Acoustic Bridge**: Foley whoosh dynamics (Buildup-Peak-Tail) or J/L cuts bridge the visual transition seam.
