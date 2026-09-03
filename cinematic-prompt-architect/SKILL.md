@@ -55,9 +55,13 @@ If the answer is still vague ("it's for my coffee brand"), ask exactly ONE sharp
 
 ### Step 0.6 — Engine, total length, and route (still one question at a time)
 
-1. Ask which model/engine it's for (Sora, Veo, Kling, Runway, Seedance, "not sure yet") — one question, single-select. `references/model-dialects.md` has deep, source-grounded detail per provider (official docs plus community consensus): container-vs-prompt parameters, dialogue syntax differences, negative-prompt support (Kling: yes and recommended; Runway: explicitly unsupported; Sora/Veo: not a primary lever), character/identity-lock mechanisms, per-engine prompt-density targets (Veo 100–150 words, Kling 60–100, Runway 40–75, Sora ultra-brief vs open), and known failure modes per platform. Read the relevant section once the engine is picked and let it shape every later category — e.g. never suggest a negative-prompt block for Runway, and for Sora, explicitly ask whether the user wants the "ultra-detailed production brief" mode or a short open prompt, since OpenAI's own guidance frames that as a real control-versus-creativity tradeoff, not a style preference. If the project spans needs (e.g. establishing shot + dialogue scene + product insert), route per shot using the "Multi-model toolkit routing" section and say so in one line. If unsure which engine, default to the cross-model consensus section at the bottom of that file and note which parts to adapt later.
-2. Ask for clip length / constraints if known — separate question. Check exact ceilings in `references/long-form.md` (native vs extended vs catch per engine) rather than assuming one number.
-3. Ask for TOTAL finished length as its own question — this is the number that decides the architecture. If it exceeds the native ceiling, route per `references/long-form.md` (single / Extend / Assembly), state clip count + tradeoff in two lines, get approval, then deliver clip-by-clip prompts each runnable alone with SAME blocks re-stated and handoff specs.
+1. Ask which model/engine it's for (Sora, Veo, Kling, Runway, Seedance, "not sure yet") — one question, single-select. `references/model-dialects.md` has deep, source-grounded detail per provider.
+2. **Determine Shot Duration & Native Ceilings**:
+   - Check exact ceilings in `references/long-form.md`: Sora 2 (10–20s native), Veo 3.1 (8s native), Kling 3.0 (10–15s native), Seedance 2.5 (15–30s native), Runway Gen-4.5 (10s native).
+   - **MANDATORY DURATION RULE**: If a scene fits within the engine's native single generation ceiling (e.g. 10s Sora, 8s Veo), **NEVER split it into tiny 2s–3s micro-shots**. Generate a single unbroken continuous take using the engine's full native capability. Splitting a scene into 2-second fragments destroys action coherence, causes camera stutter, and breaks audio/lip-sync.
+3. If finished length genuinely exceeds the native single-shot ceiling, route per `references/long-form.md`:
+   - Follow the **Four Anchor Protocol** (Acoustic stem repetition, Identical grade token string, Identical wardrobe materials, and Locked environmental lighting coordinates) to guarantee zero drift across shots.
+
 
 ### Step 1 — Assets and references (ask this early, it changes everything downstream)
 
@@ -122,9 +126,11 @@ Synthesize everything into one prompt (see "the final prompt is synthesized, not
 - Color: repeat the EXACT same anchor token strings in prompt, beats, and locks (`references/color-and-skin.md`); one grade anchor in colorist vocabulary plus a unifying grain line.
 - Skin: every face gets tone + undertone + texture (pores, uneven tone, subsurface glow) in identical tokens, directional light tied to the reveal, Kling skin negatives on close-ups, no-averaging lock on multi-face shots.
 - Audio: open with a one-line audio brief, then a sound map (foreground/mid/background, one cue per layer per beat) with SFX anchored to exact visible moments, location-specific bed, music decision stated, negative audio as positive phrasing outside Kling. Dialogue gets the human treatment: breath cue, max one disfluency, pitch arc + stressed words, staggered turns with backchannels, one emotion per line, delivery matching visible effort (`references/sound-design.md`, `references/music-and-sfx.md`).
-- Smoke/fog/steam: source + scale + volume + temporal change + wind keyword + light interaction, cinematic adjectives only — technical physics terms banned (they render as jittery static).
-- Legible on-screen text / subtitles: promise it ONLY for Seedance. On every other engine, plan text as a post overlay and say so.
-- Add a separate Negative Prompt block ONLY where supported (Kling: yes, short 3–10 concrete defect terms; everywhere else: no — use positive phrasing instead).
+- Multi-shot continuity (The Four Anchor Protocol): When delivering a series of shots, every single prompt MUST repeat the identical audio stem descriptors (BPM, key, ambient layers), the verbatim colorist grade token string, the exact wardrobe materials, and the environmental lighting coordinates (`references/long-form.md`). Never let music, tone, or palette drift between shots.
+- Text on walls, signs, and phone screens (`references/long-form.md`):
+  * **On-screen UI and phone screens**: AI video models warp and artifact small text. Describe phone screens and monitors as emitting a clean colored glow (e.g. "soft cool blue luminescence") with clean abstract shapes, and explicitly designate the text messages, UI notifications, or subtitles as a post-production graphical overlay (`[Post Note: Composite UI graphics in post]`).
+  * **Environmental signage**: Only permit 1–2 massive, high-contrast, simple words (e.g. bold red neon "BAR" or "MOTEL"). Never prompt complex menus, street posters with paragraphs of text, or detailed documents in the generation.
+  * Promise rendered subtitles/lower-thirds ONLY on Seedance 2.0. On Sora, Veo, Kling, and Runway, plan all legible text as post overlays.
 - Keep language concrete and visual, not abstract — describe what's seen/heard, not intent ("she taps her fingers in an irregular rhythm" not "she seems bored").
 - Include the timecoded beat structure if the shot has more than one distinct moment.
 - Close with a short positive-locks list of hard constraints.
