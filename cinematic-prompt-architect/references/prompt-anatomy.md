@@ -63,6 +63,7 @@ Ask:
 - For spoken lines: breath placement, ONE disfluency max, pitch arc + stressed words, staggered turns with listener backchannels, one emotion per line, voice matching visible effort (`references/sound-design.md` naturalness section) — never overlapping voices in-generation.
 - **Line-craft (words must be speakable):** read every line aloud — if awkward to say, rewrite. Contractions always, fragments over full sentences, interruptions and trail-offs welcome. One line = one transitive ACTION verb aimed at the scene partner ("to needle her", "to dismiss him" — never emotion adjectives like "angrily"). Distinct voice per character (vocab, rhythm, quirks). Kill on-the-nose exposition ("Already solved three refunds while you asked" → "Handled. Three refunds. While you asked."): suggest, don't tell; let contradiction between line and body carry subtext. Short is a feature for AI (4–10 words). Flag any line you rewrote so the user approves the new words.
 - **Body language (the missing channel):** every visible character gets posture + weight + ONE hand action per clip — the Three-Keyword Rule ("slumped, rooted, clenches fist"; max one upper-body + one lower-body action per 4–6s). Directional verbs over emotional adjectives ("listlessly drags feet", not "sad man"). Gestures tie to BEATS, never mime single words. Reaction bodies stay visible (posture shifts on turns, listener nods/shifts weight). Status physicality: lean-in = connection, step-back = detachment, open/closed, proxemics between characters. Anatomical anchors (correct anatomy, limb separation, balanced weight) + negatives on risky motion. Reroll acting notes by changing the adverb, keeping the posture.
+- Full system + checklist: `references/dialogue-and-body.md` — read it whenever anyone speaks, gestures, or performs (covers line-craft, action verbs, gesture–speech synchrony, status/face clusters, delivery checklist).
 
 ## 6. Physics & materials
 
@@ -98,7 +99,13 @@ Ask (skip entirely if target engine is silent-video-only):
 - Ambient sound / SFX tied to visible actions (footsteps, fabric, wind, objects)?
 - Music or no music?
 
-Then build the full sound design per `references/sound-design.md`: one-line audio brief first, four layers with mix jobs, a sound map against the beats, negative audio. Never "add good sound" — always brief + map it.
+Then build the full sound design per `references/sound-design.md` and `references/music-and-sfx.md`:
+- One-line audio brief first (listener perspective, emotional intention, key sonic focus).
+- Sound map across beats structured by the 4 mix layers: Spoken Dialogue, Hard SFX & Foley, Room Ambience Bed, and Music Score.
+- SFX transient/body/tail breakdown (attack snap, resonant physical body/mass, acoustic release/decay).
+- Motivated whoosh air displacement (BPT: Buildup, Peak at blur apex, Tail dissipation).
+- Music spotting (explicit entry/exit timecodes, cue function, and intentional silence/drop for dialogue punch).
+- Negative audio (positive phrasing outside Kling: e.g. "no electronic score, natural diegetic atmosphere only").
 
 ## 9. Style & realism
 
@@ -123,9 +130,11 @@ Ask (usually inferable from earlier answers — confirm rather than re-ask from 
 
 ---
 
-## Global constraints (apply to every prompt, not a category)
+## Global constraints & Deliverable Formats
 
-- **Density band**: Veo 100–150 words, Kling 60–100, Runway 40–75, Sora ultra-brief or short-open, Seedance 5 slots + timestamp headers. Cut adjectives before constraints.
+- **Two Deliverable Formats**:
+  1. **Full Production-Brief Mode (Default & Master Standard)**: All-caps structural blocks (`SCENE CONTEXT`, `ACTIVE REFERENCES`, `LOCATION MAP`, `FIRST FRAME / BLOCKING`, `FORMAT MODE`, `OPTICS`, `CAMERA`, `ACTION`, `PERFORMANCE`, `PHYSICS`, `LIGHTING`, `AUDIO`, `STYLE`, `OUTPUT SETTINGS`, `POSITIVE LOCKS`) placed directly inside the copy-ready block. Uncompromising physical, temporal, and acoustic specificity.
+  2. **Compact Mode**: For quick clips or constrained model windows (Veo 100–150 words, Kling 60–100, Runway 40–75) with supplemental breakdown sections outside the copy block.
 - **Aspect ratio**: ask when social/vertical is plausible. Veo is strongest at 9:16; most others default 16:9. Record the choice in the run header.
 - **On-screen text**: only promise legible text for Seedance; everywhere else it's a post overlay.
 - **Negative prompting**: Kling-only block (3–10 concrete defect terms). Everywhere else, positive phrasing only.

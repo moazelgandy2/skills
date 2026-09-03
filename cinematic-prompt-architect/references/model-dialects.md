@@ -127,15 +127,15 @@ Rules across all of them: one reference per series (never swap mid-project), neu
 
 More text is not more control past a density ceiling — and each engine's ceiling differs. Hit the band, not the character limit:
 
-| Engine | Target prompt length | Notes |
+| Engine | Prompt Architecture & Format | Notes |
 | --- | --- | --- |
-| Sora 2 | Two modes: ultra-detailed production brief OR short open prompt (control-vs-creativity tradeoff — ask the user which) | 7-element formula (Subject, Action, Environment, Camera, Lighting, Style, Technical) when going detailed |
-| Veo 3/3.1 | 100–150 words, 3–6 sentences | 7-part structure; JSON key-value form also works well |
-| Kling 3.0 | T2V tight 60–100 words; **I2V 15–40 words motion-only** (API cap 2,500 chars, but density beats length) | 5-part structure; O1 edit prompts 50–150 words, surgical verbs |
-| Runway Gen-4/4.5 | 40–75 words, structured shot-list | Motion-only for I2V; simplicity beats complexity |
-| Seedance 2.0 | 5 slots + timestamp headers; test at 3–5s first | Repeat locks under every timestamp header |
+| Sora 2 | **Full Production-Brief (600–1200+ words)** with timecoded blocks, optics, camera kinematics, performance beats, physics, lighting, audio & positive locks | Natively parses full capitalized section briefs with precise timed segments |
+| Veo 3/3.1 | **Full Production-Brief (500–900+ words)** with native audio spotting, transient/body/tail SFX, and prose-attributed dialogue | Attributes dialogue in prose; native multi-channel acoustic and physics parsing |
+| Kling 3.0 | **Full Production-Brief (400–800+ words)** + separate negative prompt block | Elements 3.0 identity binding; 5-part core expanded into complete spatial and performance brief |
+| Runway Gen-4/4.5 | **Structured Production-Brief (300–600+ words)** | Full spatial, material, and optical constraints; motion-first for I2V; no negative prompts |
+| Seedance 2.0 | **Full Production-Brief with timestamp headers `[00:00-00:05]` (400–800+ words)** | Multi-modal `@` refs; repeat locks under every timestamp header |
 
-If a draft exceeds its band, cut adjectives before cutting constraints — one countable physical verb ("takes four steps, pauses, pulls the curtain") is worth a paragraph of mood.
+**Universal Deliverable Rule**: The copy-ready prompt must ALWAYS be the complete, deep, multi-section production brief containing all capitalized sections (`SCENE CONTEXT` through `POSITIVE LOCKS`). Never condense the output into an abbreviated 1-paragraph summary. All physical telemetry, micro-gestures, acoustic envelopes, and positive locks belong directly inside the copy-ready block.
 
 ---
 

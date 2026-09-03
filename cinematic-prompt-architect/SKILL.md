@@ -109,17 +109,19 @@ If the request is genuinely complex (multi-character, multi-beat, identity-criti
 Synthesize everything into one prompt (see "the final prompt is synthesized, not assembled" in the core principle above) following the category order from `references/prompt-anatomy.md`, matching the target engine's dialect (see `references/model-dialects.md`):
 
 - Lead with the layer order that engine prefers.
-- Hit the engine's density band (`references/model-dialects.md` table: Veo 100–150 words, Kling 60–100, Runway 40–75, Sora ultra-brief or short-open, Seedance 5 slots + timestamp headers). The band applies to the copy-ready prompt paragraph ONLY — timecoded beats and positive locks live as separate labeled sections outside that count. If the draft runs long, cut adjectives before cutting constraints, and never delete beats, voice specs, or locks to hit the band.
-- Use the engine's dialogue syntax exactly: Veo/Seedance/Kling = quoted lines attributed in prose (`she whispers "…"`) with a tone label; Sora = separate labeled `Dialogue:` block below the prose. Never mix them.
-- Timestamp `[00:00-00:05]`-style headers are Seedance-only syntax. On every other engine write beats as plain timecoded lines (`0.0–3.5s — …`), never bracket headers — dialect syntax must not leak across engines.
-- For Kling image-to-video / Runway image-to-video, go motion-first: describe what moves and how the camera behaves, don't re-describe the static frame. With an attached first frame: 15–40 words of pure movement + a keep-X-unchanged protect clause (`references/image-attachments.md`); the image owns composition, subject, lighting, and style.
-- Multi-reference generations bind each image to its stated role inline (`@Image1` on Seedance, Elements/Ingredients slots elsewhere) and freeze one verbatim identity block across the series — never rephrase it.
+- **Universal Deliverable Standard: Full Production-Brief Mode**:
+  - The copy-ready prompt block MUST ALWAYS be the COMPLETE, uncompromised, fully-specified production brief in all-caps section blocks (`SCENE CONTEXT`, `ACTIVE REFERENCES`, `LOCATION MAP`, `FIRST FRAME / BLOCKING`, `FORMAT MODE`, `OPTICS`, `CAMERA`, `ACTION`, `PERFORMANCE`, `PHYSICS`, `LIGHTING`, `AUDIO`, `STYLE`, `OUTPUT SETTINGS`, `POSITIVE LOCKS`).
+  - **NEVER output a single-paragraph or truncated prompt** (e.g., a short 100-word paragraph). Short summary paragraphs lack the physical telemetry, micro-gestures, acoustic envelopes, and positive locks required to eliminate AI drift. The ready-to-copy block must always be the deep, multi-section production specification.
+- Use the engine's dialogue syntax exactly: Veo/Seedance/Kling = quoted lines attributed in prose (`she whispers "…"`) with a tone label; Sora = separate labeled `Dialogue:` block below the prose or within the `AUDIO` section. Never mix them.
+- Timestamp `[00:00-00:05]`-style headers are Seedance-only syntax. On every other engine write beats as plain timecoded lines (`0.0s to 5.4s — …`), never bracket headers — dialect syntax must not leak across engines.
+- For Kling image-to-video / Runway image-to-video, go motion-first within this structure: describe what moves and how the camera behaves, don't re-describe the static frame. With an attached first frame: 15–40 words of pure movement + a keep-X-unchanged protect clause (`references/image-attachments.md`); the image owns composition, subject, lighting, and style.
+- Multi-reference generations bind each image to its stated role inline (`@Image1` on Seedance, `<<<image_N>>>` or Elements/Ingredients slots elsewhere) and freeze one verbatim identity block across the series — never rephrase it.
 - For Kling O1 / Runway Aleph edits, use surgical verbs ("swap X for Y", "remove", "restyle") aimed at exact elements, ~50–150 words, not a full scene brief.
 - Every transition between beats gets a NAMED mechanism from `references/transitions.md` (match on action, graphic match, whip pair, morph with shared anchor, occlusion hide, sound bridge) — never "smooth transition". State which half lives in-generation vs in-edit: morphs/whips/match-cuts/occlusions are prompted as PAIRS sharing direction, speed, anchor position/scale, light, and grade; dissolves/fades/hard cuts are post-only and never prompted.
 - Every gaze gets a screen-direction vector on a declared spatial map (`references/gaze-and-space.md`): positions first (frame-left/right, near/far, sitting/standing height), then "she looks screen-left toward him" / "he turns screen-right toward her voice" — never bare "at her". Hold one 180° axis (whip travels along it toward the target); look-beat lands BEFORE the line; joint attention converges both eyelines on one named point; per-character lens ownership stated (into lens vs at off-camera mark).
 - Color: repeat the EXACT same anchor token strings in prompt, beats, and locks (`references/color-and-skin.md`); one grade anchor in colorist vocabulary plus a unifying grain line.
 - Skin: every face gets tone + undertone + texture (pores, uneven tone, subsurface glow) in identical tokens, directional light tied to the reveal, Kling skin negatives on close-ups, no-averaging lock on multi-face shots.
-- Audio: open with a one-line audio brief, then a sound map (foreground/mid/background, one cue per layer per beat) with SFX anchored to exact visible moments, location-specific bed, music decision stated, negative audio as positive phrasing outside Kling. Dialogue gets the human treatment: breath cue, max one disfluency, pitch arc + stressed words, staggered turns with backchannels, one emotion per line, delivery matching visible effort (`references/sound-design.md`).
+- Audio: open with a one-line audio brief, then a sound map (foreground/mid/background, one cue per layer per beat) with SFX anchored to exact visible moments, location-specific bed, music decision stated, negative audio as positive phrasing outside Kling. Dialogue gets the human treatment: breath cue, max one disfluency, pitch arc + stressed words, staggered turns with backchannels, one emotion per line, delivery matching visible effort (`references/sound-design.md`, `references/music-and-sfx.md`).
 - Smoke/fog/steam: source + scale + volume + temporal change + wind keyword + light interaction, cinematic adjectives only — technical physics terms banned (they render as jittery static).
 - Legible on-screen text / subtitles: promise it ONLY for Seedance. On every other engine, plan text as a post overlay and say so.
 - Add a separate Negative Prompt block ONLY where supported (Kling: yes, short 3–10 concrete defect terms; everywhere else: no — use positive phrasing instead).
@@ -132,9 +134,25 @@ Output the prompt as a markdown artifact (it's a standalone deliverable the user
 
 Strict output template — same shape every time so the copy block is unmistakable:
 1. `# Title — Engine | duration | aspect` header, then the 2-line run header (engine/duration/aspect + cheap-test plan), then assumptions (one line each).
-2. Exactly ONE fenced ` ```prompt ` block containing ONLY paste-ready text — no markdown, no headers, no commentary, no meta-notes inside the fence. Label its word count against the density band directly above it ("Copy-ready prompt (127 words — Veo band 100–150)").
-3. Everything else lives OUTSIDE the fence as labeled sections in this order: Beats (timed lines) → Transition (if any) → Spatial/gaze map (if 2+ people) → Audio brief + sound map → Voice specs → Style/color/skin locks → Negative Prompt (Kling only) → Positive locks → Post notes.
-4. Line-craft + body rules from `references/prompt-anatomy.md` category 5 apply inside the fence: speakable rewritten lines (flag rewrites), one action verb per line, and the Three-Keyword body spec per character woven into beats, not dumped in one paragraph.
+2. Exactly ONE fenced ` ```prompt ` block containing ONLY paste-ready text — no markdown headers (#) or markdown formatting inside the fence so it pastes cleanly into the generation UI or API. It must contain the COMPLETE, deep, master specification with all all-caps sections:
+   - `SCENE CONTEXT`
+   - `ACTIVE REFERENCES`
+   - `LOCATION MAP`
+   - `FIRST FRAME / BLOCKING`
+   - `FORMAT MODE`
+   - `OPTICS`
+   - `CAMERA`
+   - `ACTION`
+   - `PERFORMANCE`
+   - `PHYSICS`
+   - `LIGHTING`
+   - `AUDIO`
+   - `STYLE`
+   - `OUTPUT SETTINGS`
+   - `POSITIVE LOCKS`
+   Label the word count directly above the fence (e.g., `Copy-ready prompt (Full Production Brief — 780 words)`).
+3. Outside the fence, include Post-Production Engineering notes, Stem/Mix guidelines, and Engine-Specific deployment notes.
+4. Line-craft + body rules from `references/prompt-anatomy.md` category 5 and the full `references/dialogue-and-body.md` system (action verbs, gesture–speech synchrony, status/face clusters, delivery checklist) apply inside the prompt: speakable rewritten lines (flag rewrites), one action verb per line, and the Three-Keyword body spec per character woven into beats, not dumped in one paragraph.
 
 Add a two-line run header above the prompt: line 1 = engine + duration + aspect ratio (ask aspect if social/vertical is plausible — Veo is strongest at 9:16, most others default 16:9); line 2 = the cost-smart test plan ("test at 480p / 3–5s first, scale up once it lands"). Keep it to two lines, not a lecture.
 
@@ -169,5 +187,7 @@ These are grounding material and starting points for reasoning — not templates
 - `references/sound-design.md` — audio brief, four layers + mix jobs, sound map, negative audio, post line, review checklist; read whenever the engine does native audio or the user cares about sound
 - `references/transitions.md` — in-generation vs in-edit line, transition menu with job each fits, pair-writing rules, engine fit, failure fixes; read whenever there is more than one beat or shot
 - `references/gaze-and-space.md` — spatial map, eyeline-match pairs, 180° axis, look-before-line, joint attention, looking space, lens ownership; read whenever two or more people share a scene or anyone looks at anyone/anything
+- `references/dialogue-and-body.md` — line-craft, action-verb voice direction, Three-Keyword bodies, gesture–speech synchrony, status/face clusters, delivery checklist; read whenever anyone speaks, gestures, or performs
+- `references/music-and-sfx.md` — spotting map, cue functions, native-vs-post music line, sonic logos, SFX layering, whoosh design, sweetening, silence discipline; read whenever music or designed SFX matter beyond a simple bed
 - `references/long-form.md` — native/extended ceilings + catches, Extend-vs-Assembly routing, extension prompt rules, endpoint discipline, ad spine; read whenever total finished length exceeds one clip
 - `references/image-attachments.md` — read-first deconstruction, one-image-one-role assignment, triple-duty flag, first-frame discipline (I2V 15–40 words motion-only), fusion rules, identity block, chain discipline; read whenever ANY image is attached or referenced
