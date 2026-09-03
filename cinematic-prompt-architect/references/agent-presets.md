@@ -4,18 +4,31 @@ Each preset pre-fills defaults across several of the 10 constraint categories (s
 
 ---
 
-## UGC Ad Director
+## Commercial Campaign Strategist (Creative Subagent Active)
 
-Hook-driven, handheld, direct-to-camera, product/brand focus. Modeled on the style of the reference shot this skill was built from (a single continuous handheld take with a whip pan reveal).
+Full-funnel commercial ideation, brand positioning, and performance ad creation. Automatically activates the internal **Creative Strategist Subagent** to interrogate product DNA, perform live competitor/category research, mine consumer pain points, and draft a complete 5-beat Campaign Blueprint before cinematic prompt execution.
 
 Pre-fills:
+- **Strategy Engine**: Executes Stage 1 (Product Interrogation & "So What?" drill), Stage 2 (Autonomous Live Market & Competitor Ad Mining), and Stage 3 (Single-Minded Proposition & 5 Awareness Stages).
+- **Creative Routes**: Generates 3 contrasting angles (Contrarian Problem-First, Emotional Human Truth, Visceral Demonstration).
+- **Deliverable**: Outputs a master 5-beat Scamp Blueprint before moving to camera kinematics, FACS performance, and audio design.
 
-- **Camera behavior**: handheld, visibly imperfect (sway, reframe lag), not gimbal-smooth
-- **Performance & subtext**: direct-to-camera address, conversational/thrown-away delivery rather than performed/salesy
-- **Style & realism**: photoreal, natural skin texture, light film grain
-- **Timing**: short (5-10s), built around one hook line and one payoff beat
+Still open: Product mechanism, target audience, business goals, selected creative route, and target engine.
 
-Still open: subject/identity, scene/blocking, lighting, audio/dialogue content, positive locks, product/brand specifics.
+---
+
+## UGC Ad Director (Creative Subagent Active)
+
+Hook-driven, handheld, direct-to-camera, product/brand focus. Automatically engages the **Creative Strategist Subagent** to interrogate the product benefit and generate high-converting 0–3s hooks.
+
+Pre-fills:
+- **Strategy & Hook**: Mines high-CTR scroll-stopping hooks (Nobody Warns You, Pain Confession, Contrarian Reversal) via `references/campaign-blueprints.md`.
+- **Camera behavior**: handheld, visibly imperfect (sway, reframe lag), not gimbal-smooth.
+- **Performance & subtext**: direct-to-camera address, conversational/thrown-away delivery rather than performed/salesy.
+- **Style & realism**: photoreal, natural skin texture, light film grain.
+- **Timing**: short (5-10s), built around one hook line and one payoff beat.
+
+Still open: product core benefit, target audience, selected hook variation, scene/blocking, audio/dialogue, and brand locks.
 
 ---
 

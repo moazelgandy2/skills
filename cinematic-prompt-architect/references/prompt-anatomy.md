@@ -92,23 +92,26 @@ Ask:
 - Exact brand/product color tokens (names, not "brand colors") — these become identical repeated anchors (`references/color-and-skin.md`).
 - For faces: does the light rake across the skin to reveal texture, or flatten it? Tie light to skin explicitly.
 
-## 8. Audio
+## 8. Audio & Acoustic Architecture
 
-Why: many engines now generate native audio; unspecified audio defaults to silence or generic ambience. Dialogue needs a voice performance spec separate from the words (accent, register, pacing, emotional coloring) or it defaults to a flat TTS-like read.
+Why: Audio represents 50% of the perceived production value in cinema. Sound anchors synchresis, establishes real physical scale, masks AI visual artifacts, and bypasses the visual cortex straight to the nervous system via psychoacoustics. Unspecified audio defaults to robotic text-to-speech, synthetic silence, or generic library mush.
 
 Ask (skip entirely if target engine is silent-video-only):
 
-- Any dialogue? If so, exact words plus a voice description (age, accent, register, pacing, emotional tone).
-- Ambient sound / SFX tied to visible actions (footsteps, fabric, wind, objects)?
-- Music or no music?
+- Spoken dialogue? Exact words, operative stressed word in CAPS, audible breath cue, vocal register (chest/head/whisper), mic proximity (tight proximity vs. acoustic throw).
+- Tactile Foley & hard SFX? Footwear × Substrate combo (e.g. hard leather on wet marble vs. combat boots on forest loam), cloth fabric friction (denim, starched cotton, leather, wool), prop mechanicals (sear clicks, glass chimes, locks).
+- Acoustic environment & room physics? Location keynotes, soundmarks, and reverberation profile ($RT_{60}$: dry anechoic <0.15s, domestic 0.4s, cavernous concrete 2.5s, cathedral stone 6.0s).
+- Diegetic status? Objective external world vs. Subjective meta-diegetic (tinnitus, internal heartbeat, muffled underwater shock) vs. Trans-diegetic bridge.
+- Music & Psychoacoustics? Scoring palette (Hybrid Orchestral, Dark Ambient Industrial, Electroacoustic Minimalist, Neoclassical, Sci-Fi Synth), cue function (tension bed, pacing motor, stinger), and psychoacoustic triggers (Shepard tone, 18Hz fear infrasound, The Pre-Drop to zero dB before an impact).
 
-Then build the full sound design per `references/sound-design.md` and `references/music-and-sfx.md`:
-- One-line audio brief first (listener perspective, emotional intention, key sonic focus).
-- Sound map across beats structured by the 4 mix layers: Spoken Dialogue, Hard SFX & Foley, Room Ambience Bed, and Music Score.
-- SFX transient/body/tail breakdown (attack snap, resonant physical body/mass, acoustic release/decay).
+Then construct the master audio brief per `references/sound-design.md` and `references/music-and-sfx.md`:
+- One-line acoustic brief (emotional target + listener perspective + primary mix focus).
+- Master Stem budgeting (The Rule of 2.5): 1 Primary Anchor (~60%), 1 Secondary Context (~25%), 1 Tertiary Bed (~15%).
+- 5-Point Component SFX spec: Transient (0–30ms) + Resonant Body (30–300ms) + Sub-Bass Weight (20–80Hz) + Mechanical Sweetener + Acoustic Tail ($RT_{60}$).
 - Motivated whoosh air displacement (BPT: Buildup, Peak at blur apex, Tail dissipation).
-- Music spotting (explicit entry/exit timecodes, cue function, and intentional silence/drop for dialogue punch).
-- Negative audio (positive phrasing outside Kling: e.g. "no electronic score, natural diegetic atmosphere only").
+- Distance physics: Atmospheric HF roll-off (distant sounds are low-pass filtered, never just quieter).
+- Vocal pocket: Carving a 3–6dB window in music/ambience across the 1kHz–3kHz speech zone.
+- Negative audio: Positive phrasing outside Kling (e.g. "no generic synth pads, no digital clipping, no robotic cadence, natural diegetic sound only").
 
 ## 9. Style & realism
 
